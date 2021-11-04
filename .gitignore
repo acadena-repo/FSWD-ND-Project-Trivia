@@ -1,0 +1,11 @@
+# Ignore Python Environment folder
+api
+
+# Ignore Node files
+node-v14.18.1-linux-x64
+
+# Ignore compiled bytecode
+backend/__pycache__
+
+# Ignore Node Modules
+frontend/node_modules
