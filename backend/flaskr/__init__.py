@@ -1,4 +1,3 @@
-import os
 from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -9,16 +8,23 @@ from models import setup_db, db, Question, Category
 QUESTIONS_PER_PAGE = 10
 
 def paginate_questions(request, selection):
-    page = request.args.get("page", 1, type=int)
-    start = (page - 1) * QUESTIONS_PER_PAGE
-    end = start + QUESTIONS_PER_PAGE
+  '''
+  Returns a questions' set filtered by the specified number by page
+  '''
+  page = request.args.get("page", 1, type=int)
+  start = (page - 1) * QUESTIONS_PER_PAGE
+  end = start + QUESTIONS_PER_PAGE
 
-    questions = [question.format() for question in selection]
-    current_questions = questions[start:end]
+  questions = [question.format() for question in selection]
+  current_questions = questions[start:end]
 
-    return current_questions
+  return current_questions
 
 def create_app(test_config=None):
+  '''
+  Returns an application object with all the endpoints that supports
+  the REST-API with the frontend and the database
+  '''
   # create and configure the app
   app = Flask(__name__)
   setup_db(app)
@@ -35,6 +41,7 @@ def create_app(test_config=None):
       )
       return response
 
+  # Categories endpoint
   @app.route('/categories', methods=['GET'])
   def get_categories():
     categories = Category.query.order_by(Category.id).all()
@@ -48,6 +55,7 @@ def create_app(test_config=None):
       }
     )
 
+  # Questions endpoint
   @app.route('/questions', methods=['GET'])
   def get_questions_by_page():
     questions = Question.query.order_by(Question.id).all()
@@ -82,12 +90,12 @@ def create_app(test_config=None):
     if len(questions) == 0:
       abort(404)
 
-    formatted_questions = [q.format() for q, _ in questions]
+    questions_formatted = [question.format() for question, _ in questions]
     current_category = questions[0][1].format()
 
     return jsonify(
       {
-        'questions':formatted_questions,
+        'questions':questions_formatted,
         'total_questions':len(questions),
         'current_category':current_category['type']
       }
@@ -120,6 +128,7 @@ def create_app(test_config=None):
     else:
       abort(404)
 
+  # Questions search endpoint
   @app.route('/questions/search', methods=['POST'])
   def get_questions_by_term():
     body = request.get_json()
@@ -132,17 +141,18 @@ def create_app(test_config=None):
     if len(questions) == 0:
       abort(404)
 
-    formatted_questions = [q.format() for q, _ in questions]
+    questions_formatted = [question.format() for question, _ in questions]
     current_category = questions[0][1].format()
 
     return jsonify(
       {
-        'questions':formatted_questions,
+        'questions':questions_formatted,
         'total_questions':len(questions),
         'current_category':current_category['type']
       }
     )
 
+  # Quizzes endpoint
   @app.route('/quizzes', methods=['POST'])
   def play_quiz():
     body = request.get_json()
@@ -154,21 +164,24 @@ def create_app(test_config=None):
     else:
       questions_query = Question.query.filter_by(category=category_id).all()
 
-    questions = [q.format() for q in questions_query]
-    question = questions[0]
+    questions_formatted = [question.format() for question in questions_query]
 
-    while len(questions) > 0:
-      random.shuffle(questions)
-      q = questions.pop()
-      if q['id'] not in previous_questions:
-        question = q
+    while len(questions_formatted) > 0:
+      random.shuffle(questions_formatted)
+      current_question = questions_formatted.pop()
+      if current_question['id'] not in previous_questions:
+        question = current_question
         break
+
+    if len(questions_formatted) == 0:
+      question = None
 
     return jsonify(
       {
         'question':question
       })
 
+  # REST-API error handlers
   @app.errorhandler(404)
   def not_found(error):
       return (

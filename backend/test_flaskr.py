@@ -1,4 +1,5 @@
 import os
+from dotenv import load_dotenv
 import unittest
 import json
 from flask_sqlalchemy import SQLAlchemy
@@ -15,11 +16,16 @@ class TriviaTestCase(unittest.TestCase):
         self.app = create_app()
         self.client = self.app.test_client
         self.database_name = "trivia_test"
-        self.database_path = "postgres://student:student@{}/{}".format('localhost:5432', self.database_name)
+        load_dotenv()
+        # Set environmental variables to connect to the database
+        user = os.getenv('DBUSER')
+        pwsd = os.getenv('PASSWORD')
+        self.database_path =  f'postgresql+psycopg2://{user}:{pwsd}@localhost:5432/{self.database_name}'
         setup_db(self.app, self.database_path)
 
         self.val_question = {'question':'Which is the most popular sport?','answer':'Soccer','category':'6','diffuculty':1}
         self.bad_question = {'question':'Which is the most popular sport?','answer':'Soccer','category':"Sports",'diffuculty':"low"}
+        self.entertainment_quiz = {'previous_questions':[2,6],'quiz_category':{'type':'Entertainment','id':5}}
 
         # binds the app to the current context
         with self.app.app_context():
@@ -48,11 +54,27 @@ class TriviaTestCase(unittest.TestCase):
         self.assertGreater(data['total_questions'],0)
         self.assertIn(data['current_category'],data['categories'].values())
 
+    def test_get_questions_by_category(self):
+        res = self.client().get("/categories/6/questions")
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertGreater(data['total_questions'],0)
+        self.assertEqual(data['current_category'],"Sports")
+
     def test_add_question(self):
         res = self.client().post("/questions", json=self.val_question)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
+
+    def test_quiz_entertainment(self):
+        res = self.client().post("/quizzes", json=self.entertainment_quiz)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data["question"]["id"], 4)
+        self.assertEqual(data["question"]["category"], 5)
 
     def test_404_get_questions_by_page(self):
         res = self.client().get("/questions?page=100")
