@@ -45,7 +45,7 @@ Returns a json object with all categories, that contains id:category as key-valu
 - **URL:** `/categories`
 - **Method:** `GET`
 - **URL Params:** `None`
-- **Success Response:**
+- **Success Response:**```
         Code: 200
         Content:
                 {'1' : "Science",
@@ -53,7 +53,7 @@ Returns a json object with all categories, that contains id:category as key-valu
                  '3' : "Geography",
                  '4' : "History",
                  '5' : "Entertainment",
-                 '6' : "Sports"}
+                 '6' : "Sports"}```
 - **Error Response:** `None`
 
 ### Show Questions by page
@@ -61,93 +61,93 @@ Returns a json object with 10 questions according with the page number requested
 - **URL:** `/questions?page=1`
 - **Method:** `GET`
 - **URL Params:** `page=[integer]`
-- **Success Response:**
+- **Success Response:**```
         Code: 200
         Content:
                 {'questions' : "collection of 10 questions",
                  'total_questions' : "total number of questions in the database",
                  'categories' : "json object with all categories",
-                 'current_category' : "category description of the first question in collection"}
-- **Error Response:**
+                 'current_category' : "category description of the first question in collection"}```
+- **Error Response:**```
         Code: 404
         Content:
-                {"success": False, "error": 404, "message": "resource not found"}
+                {"success": False, "error": 404, "message": "resource not found"}```
 
 ### Show Questions by category
 Returns a json object with all questions for category requested.
 - **URL:** `/categories/:id/questions`
 - **Method:** `GET`
 - **URL Params:** `id=[integer]`
-- **Success Response:**
+- **Success Response:**```
         Code: 200
         Content:
                 {'questions' : "collection of questions fileted by category",
                  'total_questions' : "total number of questions in the collection",
-                 'current_category' : "category description in the collection"}
-- **Error Response:**
+                 'current_category' : "category description in the collection"}```
+- **Error Response:**```
         Code: 404
         Content:
-                {"success": False, "error": 404, "message": "resource not found"}
+                {"success": False, "error": 404, "message": "resource not found"}```
 
 ### Add Question
 Insert a new question into the database.
 - **URL:** `/questions`
 - **Method:** `POST`
-- **URL Params:**
+- **URL Params:**```
                 {'question':[string],
                  'answer':[string],
                  'difficulty':[integer],
-                 'category':[integer]}
-- **Success Response:**
+                 'category':[integer]}```
+- **Success Response:**```
         Code: 200
         Content:
-                {'success': True}
-- **Error Response:**
+                {'success': True}```
+- **Error Response:**```
         Code: 422
         Content:
-                {"success": False, "error": 422, "message": "unprocessable"}
+                {"success": False, "error": 422, "message": "unprocessable"}```
 
 ### Delete Question
 Delete a question from the database.
 - **URL:** `/questions/:id`
 - **Method:** `DELETE`
 - **URL Params:** `id=[integer]`
-- **Success Response:**
+- **Success Response:**```
         Code: 200
         Content:
-                {'success': True, 'id': question.id}
-- **Error Response:**
+                {'success': True, 'id': question.id}```
+- **Error Response:**```
         Code: 404
         Content:
-                {"success": False, "error": 404, "message": "resource not found"}
+                {"success": False, "error": 404, "message": "resource not found"}```
 
 ### Search Questions
 Returns a json object with all questions found according the search term.
 - **URL:** `/questions/search`
 - **Method:** `POST`
 - **URL Params:** `searchTerm=[string]`
-- **Success Response:**
+- **Success Response:**```
         Code: 200
         Content:
                 {'questions' : "collection of questions fileted by search term",
                  'total_questions' : "total number of questions in the collection",
-                 'current_category' : "category description of the first question in collection"}
-- **Error Response:**
+                 'current_category' : "category description of the first question in collection"}```
+- **Error Response:**```
         Code: 404
         Content:
-                {"success": False, "error": 404, "message": "resource not found"}
+                {"success": False, "error": 404, "message": "resource not found"}```
 
 ### Play a trivia quiz
 Returns a json object with a question selected randomly for the category selected.
 - **URL:** `/quizzes`
 - **Method:** `POST`
-- **URL Params:**
+- **URL Params:**```
                 {'previous_question':[list],
-                 'category_id':[integer]}
-- **Success Response:**
+                 'category_id':[integer]}```
+- **Success Response:**```
         Code: 200
         Content:
-                {'question': "object with question, answer, difficulty and category"}
+                {'question': "object with question, answer, difficulty and category"}```
 - **Error Response:** `None`
 
 ## Testing
